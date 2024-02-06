@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="48" height="48" fill="white" fill-opacity="0.01"/>
+<rect x="9" y="18" width="30" height="24" rx="2" fill="#ffff00" stroke="#000000" stroke-width="4"/>
+<circle cx="17" cy="26" r="2" fill="white"/>
+<circle cx="31" cy="26" r="2" fill="white"/>
+<path d="M 20 32 C 18.9 32 18 32.9 18 34 C 18 35.1 18.9 36 20 36 V 32 Z M 28 36 C 29.1 36 30 35.1 30 34 C 30 32.9 29.1 32 28 32 V 36 Z M 20 36 H 28 V 32 H 20 V 36 Z" fill="white"/>
+<path d="M 24 10 V 18" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 4 26 V 34" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 44 26 V 34" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="24" cy="8" r="2" stroke="#000000" stroke-width="4"/>
+</svg>
