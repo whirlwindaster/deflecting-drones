@@ -1,8 +1,10 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { DEFAULT_CONFIG, type Coordinate, type GameConfig, type GenericMessageToPlayer, type RobotColor, type Tile, type Bid, type Goal } from './types';
+    import { DEFAULT_CONFIG, type Coordinate, type GameConfig, type GenericMessageToPlayer, type RobotColor, type Tile, type Bid, type Goal } from '$lib/types';
     import TileComponent from './TileComponent.svelte';
+    import { demonstrator } from '$lib/stores';
     import TextDisplay from './TextDisplay.svelte';
+    import { secondsToClockString, toSeconds, wsSend } from '$lib/helpers';
 
     let board: Tile[][] = [];
     for (let x = 0; x < 16; x++) {
@@ -26,9 +28,11 @@
     let amHost: boolean = false;
     let round: number = 0;
     let currentGoal: Goal | null;
-    let demonstrator: string = "";
+    let m_demonstrator: string = "";
+    let demo_moves: number = 0;
     let bids: Bid[] = []
     let gameCode: string = "";
+    let timer: number = 0;
     let gameConfig: GameConfig = DEFAULT_CONFIG;
     let robotPositions: Record<RobotColor, Coordinate> = {
         r: {x: 0, y: 0},
@@ -38,7 +42,19 @@
         b: {x: 0, y: 0},
     };
 
+    demonstrator.subscribe((playerName) => m_demonstrator = playerName);
+
+    let interval: NodeJS.Timer | number;
+    let bidInput: string = "";
+    let chatInput: string = "";
+
+    function scrollChat() {
+        console.log('scrolling');
+        (document.getElementById("chatEnd") as HTMLElement).scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+
     let ws: WebSocket;
+
 
     onMount(() => {
         ws = new WebSocket(
@@ -54,9 +70,17 @@
         ws.onmessage = (m) => {
             console.log(`message received: ${m.data}`);
             const message = JSON.parse(m.data) as GenericMessageToPlayer;
-            if (message.log) { log = [...log, message.log] };
+            if (message.log) {
+                log = [...log, `[SERVER]: ${message.log}`];
+                scrollChat();
+            }
             switch (message.category) {
-                case ("check_in"):
+                case "chat":
+                    //log = [`${message.name}: ${message.msg}`, ...log];
+                    log = [...log, `${message.name}: ${message.msg}`];
+                    scrollChat();
+                    break;
+                case "check_in":
                     players = message.players.map((playerName) => [playerName, 0]);
                     amHost = message.is_host;
                     gameCode = message.game_code;
@@ -88,26 +112,36 @@
                     }
                     break;
                 case 'timer':
+                    clearInterval(interval);
+                    timer = message.seconds;
+                    interval = setInterval(() => {
+                        timer -= 1;
+                        if (timer === 0) clearInterval(interval);
+                    }, 1000);
                     break;
                 case 'new_round':
                     currentGoal = message.goal;
                     bids = [];
                     round += 1;
-                    demonstrator = "";
+                    demonstrator.set("");
+                    demo_moves = 0;
                     break;
                 case 'bid':
-                    bids.push({ player: message.name, moves: message.moves });
-                    for (let i = bids.length - 1; i > 0; i--) {
-                        if (bids[i].moves >= bids[i - 1].moves) {
+                    bids.unshift({ player: message.name, moves: message.moves });
+                    for (let i = 0; i < bids.length - 1; i++) {
+                        if (bids[i].moves >= bids[i + 1].moves) {
                             const temp = bids[i];
-                            bids[i] = bids[i - 1];
-                            bids[i - 1] = temp;
+                            bids[i] = bids[i + 1];
+                            bids[i + 1] = temp;
                         }
                     }
+                    bids = bids;
                     break;
                 case 'demonstrator':
-                    bids.pop();
-                    demonstrator = message.name;
+                    bids.shift();
+                    bids = bids;
+                    demonstrator.set(message.name);
+                    demo_moves = message.moves;
                     break;
                 case 'score':
                     for (let i = 0; i < players.length; i++) {
@@ -116,6 +150,7 @@
                             break;
                         }
                     }
+                    players = players.sort(([_, aScore], [__, bScore]) => bScore > aScore ? 1 : -1);
                     break;
             }
         };
@@ -127,21 +162,147 @@
 </script>
 
 <body class="min-h-screen bg-gradient-to-b from-background_dark to-background m-9">
-    <div class="grid grid-cols-7 grid-rows-4 gap-6">
+    <div class="grid grid-cols-8 grid-rows-4 gap-6">
+
+        <!-- left panes -->
+        <div class="grid grid-rows-subgrid grid-cols-subgrid row-span-4 col-span-2 gap-6">
+
+            <!-- leaderboard -->
+            <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6">
+                <p class="text-xl text-center pb-2">leaderboard</p>
+                <div class="overflow-y-scroll bg-accent shadow-inner rounded min-h-max h-max">
+                    <ol class="list-decimal pl-6">
+                        {#each players as [playerName, score]}
+                            <li class="py-2">{`${playerName}: ${score}`}</li>
+                        {/each}
+                    </ol>
+                </div>
+            </div>
+
+            <!-- chat -->
+            <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 h-full">
+                <p class="text-xl text-center pb-2">chat</p>
+                <div class="overflow-y-scroll bg-accent shadow-inner rounded min-h-60 max-h-60">
+                    {#each log as msg}
+                        <p>{msg}</p>
+                    {/each}
+                    <div id="chatEnd"></div>
+                </div>
+                <input class="bg-accent" bind:value={chatInput} />
+                <button class="bg-accent" on:click={() => {
+                    wsSend(ws, {
+                        category: "chat",
+                        msg: chatInput
+                    });
+                    chatInput = "";
+                }}>
+                    send chat
+                </button>
+            </div>
+        </div>
+
+        <!-- board -->
+        <div class="col-span-4 row-span-4 bg-primary rounded-lg p-6">
+            <div class="grid grid-cols-16 border-dark_grey border-2 border-solid shadow">
+                {#each Array(16) as _, y}
+                {#each Array(16) as _, x}
+                    <TileComponent tile={board[x][y]} ws={ws}/>
+                {/each}
+                {/each}
+            </div>
+        </div>
+
         {#if round}
-            <TextDisplay title={"round"} content={round.toString()}/>
+            <TextDisplay title="timer" content={secondsToClockString(timer)}/>
+            <TextDisplay title="round" content={round.toString()}/>
+
+            <!-- goal display -->
+            <div class="bg-primary rounded-lg p-6 text-center w-full">
+                <p class="text-center pb-2 text-xl">goal</p>
+                <div class="shadow-inner bg-accent rounded min-h-[50%]">
+                    <img 
+                        class="mx-auto w-24 h-24"
+                        src={`/goals/${currentGoal?.color || "m"}_${currentGoal?.shape || "vortex"}.svg`} 
+                        alt={`${currentGoal?.color || "m"} ${currentGoal?.shape || "vortex"} goal`}
+                    />
+                </div>
+            </div>
+
+            <TextDisplay
+                title="presenting bid" 
+                content={m_demonstrator ? `${m_demonstrator}: ${demo_moves}` : ""} 
+            />
+
+            <!-- queued bids -->
+            <div class="col-span-2 bg-primary rounded-lg p-6 text-center w-full">
+                <p class="text-center pb-2 text-xl">queued bids</p>
+                <div class="shadow-inner bg-accent rounded min-h-[50%]">
+                    <ol class="list-decimal pl-6">
+                        {#each bids as bid}
+                            <li class="py-1">{`${bid.player}: ${bid.moves}`}</li>
+                        {/each}
+                    </ol>
+                </div>
+            </div>
+
+            <!-- bid submit -->
+            <div class="col-span-2 bg-primary rounded-lg p-6">
+                <input
+                    class="bg-accent shadow-inner rounded w-full p-3 mb-2 text-center"
+                    type="number"
+                    min="2" max="500"
+                    placeholder="enter bid"
+                    bind:value={bidInput}
+                />
+                <button class="bg-accent rounded p-3 w-full mt-2 hover:shadow" on:click={() => {
+                        wsSend(ws, {
+                            category: "bid",
+                            moves: parseInt(bidInput)
+                        });
+                        bidInput = "";
+                    }
+                }>
+                    submit bid!
+                </button>
+            </div>
         {:else}
-            
+            <!-- game code -->
+            <div class="col-span-2 bg-primary rounded-lg p-6 text-center w-full">
+                <p class="text-center pb-2 text-xl">code</p>
+                <div class="shadow-inner bg-accent rounded h-max">
+                    <p class="text-center text-7xl font-bold p-2">{gameCode}</p>
+                </div>
+            </div>
+
+            <!-- game config -->
+            <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 text-center">
+                <div class="bg-accent rounded shadow-inner h-full">
+                    <p class="text-xl p-6">rounds: {gameConfig.num_rounds}</p>
+                    <p class="text-xl p-6">pre-bid timeout: {secondsToClockString(toSeconds(gameConfig.pre_bid_timeout))}</p>
+                    <p class="text-xl p-6">post-bid timeout: {secondsToClockString(toSeconds(gameConfig.post_bid_timeout))}</p>
+                    <p class="text-xl p-6">demo timeout: {secondsToClockString(toSeconds(gameConfig.demo_timeout))}</p>
+                </div>
+            </div>
+
+            <!-- start button -->
+            <div class="col-span-2 p-6 bg-primary rounded-lg">
+                {#if amHost}
+                    <button
+                        class="rounded bg-accent p-4 w-full h-full text-center shadow hover:shadow-lg text-8xl font-light"
+                        on:click={() => {
+                            wsSend(ws, {
+                                category: "start"
+                            });
+                        }
+                    }>
+                        start!
+                    </button>
+                {:else}
+                    <button class="rounded bg-grey p-4 w-full h-full text-center shadow mx-auto text-8xl font-light cursor-default">
+                        start!
+                    </button>
+                {/if}
+            </div>
         {/if}
     </div>
 </body>
-
-<div>
-    <div class="grid grid-cols-10">
-        {#each Array(16) as _, y}
-            {#each Array(16) as _, x}
-                <TileComponent tile={board[x][y]}/>
-            {/each}
-        {/each}
-    </div>
-</div>
