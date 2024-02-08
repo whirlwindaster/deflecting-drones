@@ -3,7 +3,7 @@
     "singleQuote": true,
     "tabWidth": 4,
     "trailingComma": "none",
-    "printWidth": 88,
+    "printWidth": 100,
     "plugins": ["prettier-plugin-svelte"],
     "pluginSearchDirs": ["."],
     "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]

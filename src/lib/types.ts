@@ -46,6 +46,11 @@ export interface Log extends BaseMessageToPlayer {
   category: "log"
   log: string
 };
+export interface Chat extends BaseMessageToPlayer {
+  category: "chat"
+  name: string;
+  msg: string
+}
 export interface CheckIn extends BaseMessageToPlayer {
   category: "check_in"
   name: string
@@ -87,6 +92,7 @@ export interface BidNotif extends BaseMessageToPlayer {
 export interface Demonstrator extends BaseMessageToPlayer {
   category: "demonstrator"
   name: string
+  moves: number
   log: string
 };
 export interface Score extends BaseMessageToPlayer {
@@ -97,6 +103,7 @@ export interface Score extends BaseMessageToPlayer {
 };
 export type GenericMessageToPlayer =
   | Log
+  | Chat
   | CheckIn
   | PlayerUpdate
   | RobotUpdate
@@ -119,6 +126,10 @@ export interface MoveRequest {
   robot: RobotColor
   direction: Direction
 };
+export interface ChatRequest {
+  category: "chat"
+  msg: string
+}
 export interface Leave {
   category: "leave"
 };
@@ -126,5 +137,6 @@ export type GenericMessageToAPI =
   | StartRequest
   | BidRequest
   | MoveRequest
+  | ChatRequest
   | Leave;
   
