@@ -54,8 +54,9 @@
         (document.getElementById("chatEnd") as HTMLElement).scrollIntoView({ block: "nearest", inline: "nearest" });
     }
 
-    let ws: WebSocket;
+    let chatFocused = false;
 
+    let ws: WebSocket;
 
     onMount(() => {
         ws = new WebSocket(
@@ -163,7 +164,29 @@
             }
         };
 
+        function handleKeyboard(e: KeyboardEvent) {
+            if (e.key === "Enter") {
+                if (chatFocused) {
+                    wsSend(ws, {
+                        category: "chat",
+                        msg: chatInput
+                    });
+                    chatInput = "";
+                }
+                else if (round) {
+                    wsSend(ws, {
+                        category: "bid",
+                        moves: parseInt(bidInput)
+                    });
+                    bidInput = "";
+                }
+            }
+        }
+
+        document.addEventListener("keydown", handleKeyboard);
+
         return () => {
+            document.removeEventListener("keydown", handleKeyboard);
             ws.close();
         }
     });
@@ -190,14 +213,14 @@
             <!-- chat -->
             <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 h-full">
                 <p class="text-xl text-center pb-2">chat</p>
-                <div class="overflow-y-scroll bg-accent shadow-inner rounded min-h-60 max-h-60">
+                <div class="overflow-y-scroll bg-accent shadow-inner rounded min-h-[75%] max-h-[75%]">
                     {#each log as msg}
                         <p>{msg}</p>
                     {/each}
                     <div id="chatEnd"></div>
                 </div>
                 <div class="flex items-center pt-4 gap-2">
-                    <input class="bg-accent w-4/5 shadow-inner rounded" bind:value={chatInput} />
+                    <input class="bg-accent w-4/5 shadow-inner rounded" bind:value={chatInput} on:focus={() => { chatFocused = true; }} on:blur={() => { chatFocused = false; }} />
                     <button class="bg-accent rounded w-1/5 shadow hover:cursor-default hover:shadow-md" on:click={() => {
                         wsSend(ws, {
                             category: "chat",
@@ -229,7 +252,7 @@
             <!-- goal display -->
             <div class="bg-primary rounded-lg p-6 text-center">
                 <p class="text-center pb-2 text-xl">goal</p>
-                <div class="shadow-inner bg-accent rounded min-h-[50%]">
+                <div class="shadow-inner bg-accent rounded min-h-[70%]">
                     <img 
                         class="mx-auto w-24 h-24"
                         src={`/goals/${currentGoal?.color || "m"}_${currentGoal?.shape || "vortex"}.svg`} 
@@ -246,7 +269,7 @@
             <!-- queued bids -->
             <div class="col-span-2 bg-primary rounded-lg p-6 text-center">
                 <p class="text-center pb-2 text-xl">queued bids</p>
-                <div class="shadow-inner bg-accent rounded min-h-[50%]">
+                <div class="shadow-inner bg-accent rounded min-h-[70%]">
                     {#each bids as bid, rank}
                         <p class="py-1">{`${rank + 1}. ${bid.player}: ${bid.moves}`}</p>
                     {/each}
@@ -254,7 +277,7 @@
             </div>
 
             <!-- bid submit -->
-            <div class="col-span-2 bg-primary rounded-lg p-6">
+            <div class="flex flex-col justify-center items-center col-span-2 bg-primary min-w-full rounded-lg p-6">
                 <input
                     class="bg-accent shadow-inner rounded w-full p-3 mb-2 text-center"
                     type="number"

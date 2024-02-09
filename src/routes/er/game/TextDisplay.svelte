@@ -9,7 +9,7 @@
 
 <div class="col-span-{colSpan} row-span-{rowSpan} bg-primary rounded-lg p-6 text-center">
     <p class="text-center text-wrap pb-2 text-xl">{title}</p>
-    <div class="flex items-center shadow-inner bg-accent rounded min-h-[73%]">
+    <div class="flex items-center shadow-inner bg-accent rounded min-h-[70%]">
         <p class="text-center text-wrap min-w-full align-middle text-{textSize === 1 ? "" : textSize}xl {bold ? "font-bold" : ""} p-2">
             {content}
         </p>
