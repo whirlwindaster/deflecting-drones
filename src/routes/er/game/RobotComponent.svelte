@@ -11,6 +11,7 @@
     let showControls = false;
 
     function handleKeyboard(e: KeyboardEvent) {
+        console.log("robot key");
         switch (e.key) {
             case (`${robot}`):
                 handleRobotClick();
@@ -93,29 +94,29 @@
                     console.log(`${robot} clicked`);
                     showControls = true;
                     shouldHideControls = false;
-
+                    
                     document.removeEventListener("click", handleBubbleDocumentClick, false);
                     document.removeEventListener("click", handleCaptureDocumentClick, true);
                     document.addEventListener("click", handleBubbleDocumentClick, false);
-                    document.addEventListener("keydown", handleKeyboard);
                 }
+                document.addEventListener("keydown", handleKeyboard);
             }
             else {
                 showControls = false;
                 shouldHideControls = false;
-                
+
                 handleRobotClick = () => {};
                 document.removeEventListener("click", handleCaptureDocumentClick, true);
                 document.removeEventListener("click", handleBubbleDocumentClick, false);
                 document.removeEventListener("keydown", handleKeyboard);
             }
         })
-    });
 
-    onDestroy(() => {
-        document.removeEventListener("click", handleCaptureDocumentClick, true);
-        document.removeEventListener("click", handleBubbleDocumentClick, { capture: false });
-        document.removeEventListener("keydown", handleKeyboard);
+        return () => {
+            document.removeEventListener("click", handleCaptureDocumentClick, true);
+            document.removeEventListener("click", handleBubbleDocumentClick, { capture: false });
+            document.removeEventListener("keydown", handleKeyboard);
+        }
     });
 </script>
 

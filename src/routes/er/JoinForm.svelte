@@ -1,7 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
 
-    async function onSubmit(e: Event) {
+    async function onSubmit(e: SubmitEvent) {
         e.preventDefault();
 
         const username = (document.getElementById('join_name') as HTMLInputElement)

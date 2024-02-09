@@ -2,7 +2,7 @@
     import { goto } from '$app/navigation';
     import { myName, uuid } from '$lib/stores';
 
-    async function onSubmit(e: Event) {
+    async function onSubmit(e: SubmitEvent) {
         e.preventDefault();
 
         const username = (document.getElementById('create_name') as HTMLInputElement)
