@@ -9,9 +9,27 @@ export default {
                 primary: '#ffd60a',
                 accent: '#ffc300',
                 grey: '#9ca3af',
-                dark_grey: '#313438'
+                dark_grey: '#313438',
+                danger: '#f87171'
+            },
+            gridTemplateColumns: {
+                '16': 'repeat(16, minmax(0, 1fr))',
             }
+            
         }
     },
+    safelist: [
+        'text-2xl',
+        'text-3xl',
+        'text-4xl',
+        'text-5xl',
+        'text-6xl',
+        'text-7xl',
+        'text-8xl',
+        'text-9xl',
+        'bg-background',
+        'bg-background_dark',
+        'bg-danger'
+    ],
     plugins: []
 };

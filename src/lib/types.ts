@@ -33,9 +33,9 @@ export interface GameConfig {
 };
 export const DEFAULT_CONFIG = {
   num_rounds: 8,
-  pre_bid_timeout: 300,
-  post_bid_timeout: 60,
-  demo_timeout: 30,
+  pre_bid_timeout: 300000,
+  post_bid_timeout: 60000,
+  demo_timeout: 30000,
 } as GameConfig;
 
 interface BaseMessageToPlayer {
