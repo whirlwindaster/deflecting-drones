@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { RobotColor } from "$lib/types";
     import { demonstrator } from "$lib/stores";
-    import { onMount } from "svelte";
+    import { afterUpdate, onDestroy, onMount } from "svelte";
     import { wsSend } from "$lib/helpers";
     import { clickoutside } from '@svelte-put/clickoutside';
 
@@ -13,9 +13,10 @@
     function handleKeyboard(e: KeyboardEvent) {
         switch (e.key) {
             case (`${robot}`):
-                onClick();
+                handleRobotClick();
                 break;
             case ("ArrowUp"):
+                e.preventDefault();
                 if (showControls) {
                     wsSend(ws, {
                         category: "move",
@@ -25,6 +26,7 @@
                 }
                 break;
             case ("ArrowRight"):
+                e.preventDefault();
                 if (showControls) {
                     wsSend(ws, {
                         category: "move",
@@ -34,6 +36,7 @@
                 }
                 break;
             case ("ArrowDown"):
+                e.preventDefault();
                 if (showControls) {
                     wsSend(ws, {
                         category: "move",
@@ -43,6 +46,7 @@
                 }
                 break;
             case ("ArrowLeft"):
+                e.preventDefault();
                 if (showControls) {
                     wsSend(ws, {
                         category: "move",
@@ -57,34 +61,73 @@
         }
     }
 
-    // think about this
-    let onClick: () => void = () => {};
+    
+    let shouldHideControls = false;
+    
+    let handleRobotClick: () => void = () => {};
+    let handleCaptureDocumentClick = () => {
+        console.log('i saw that');
+        showControls = false;
+    };
+    let handleBubbleDocumentClick = () => {
+        // this event listener hears the robot click after svelte renders the controls,
+        // so shouldHideControls is needed to only hide the controls the second time this is called
+        // see line 96
+        if (shouldHideControls) {
+            showControls = false;
+            shouldHideControls = false;
+            document.removeEventListener("click", handleBubbleDocumentClick, false)
+            document.addEventListener("click", handleCaptureDocumentClick, true);
+        }
+        else {
+            shouldHideControls = true;
+        }
+    };
 
     onMount(() => {
+        document.addEventListener("click", handleCaptureDocumentClick, true);
+
         demonstrator.subscribe((playerName) => {
             if (playerName === localStorage.getItem("username")) {
-                onClick = () => {
+                handleRobotClick = () => {
+                    console.log(`${robot} clicked`);
                     showControls = true;
+                    shouldHideControls = false;
+
+                    document.removeEventListener("click", handleBubbleDocumentClick, false);
+                    document.removeEventListener("click", handleCaptureDocumentClick, true);
+                    document.addEventListener("click", handleBubbleDocumentClick, false);
+                    document.addEventListener("keydown", handleKeyboard);
                 }
             }
             else {
-                onClick = () => {};
+                showControls = false;
+                shouldHideControls = false;
+                
+                handleRobotClick = () => {};
+                document.removeEventListener("click", handleCaptureDocumentClick, true);
+                document.removeEventListener("click", handleBubbleDocumentClick, false);
+                document.removeEventListener("keydown", handleKeyboard);
             }
         })
-
-        //document.addEventListener("click", () => {setTimeout(() => showControls = false, 1000);});
-        document.addEventListener("keydown", handleKeyboard);
     });
-    
+
+    onDestroy(() => {
+        document.removeEventListener("click", handleCaptureDocumentClick, true);
+        document.removeEventListener("click", handleBubbleDocumentClick, { capture: false });
+        document.removeEventListener("keydown", handleKeyboard);
+    });
 </script>
 
+<!-- TODO DONT NEED THIS CONDITIONAL -->
 {#if robot}
+    <!-- keydown events are handled by handleKeyboard -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <img
         class="absolute z-10"
         src={`/robots/${robot}_robot.svg`}
         alt={`${robot} robot`}
-        on:click={onClick}
+        on:click={handleRobotClick}
     />
     {#if showControls}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -92,17 +135,12 @@
             class="absolute z-20 -top-10 hover:cursor-pointer"
             src="/up_arrow.svg"
             alt="up arrow"
-            on:click={() => {
+            on:click|capture={() => {
                 wsSend(ws, {
                     category: "move",
                     robot: robot,
                     direction: "up"
                 });
-            }}
-            use:clickoutside
-            on:clickoutside={() => {
-                console.log('lol lmao');
-                showControls = false;
             }}
         />
         <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -110,39 +148,33 @@
             class="absolute z-20 rotate-90 left-10 hover:cursor-pointer"
             src="/up_arrow.svg"
             alt="right arrow"
-            on:click={() => wsSend(ws, {
+            on:click|capture={() => wsSend(ws, {
                 category: "move",
                 robot: robot,
                 direction: "right"
             })}
-            use:clickoutside
-            on:clickoutside={() => showControls = false}
         />
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <img
             class="absolute z-20 rotate-180 top-10 hover:cursor-pointer"
             src="/up_arrow.svg"
             alt="down arrow"
-            on:click={() => wsSend(ws, {
+            on:click|capture={() => wsSend(ws, {
                 category: "move",
                 robot: robot,
                 direction: "down"
             })}
-            use:clickoutside
-            on:clickoutside={() => showControls = false}
         />
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <img
             class="absolute z-20 -rotate-90 -left-10 hover:cursor-pointer"
             src="/up_arrow.svg"
             alt="left arrow"
-            on:click={() => wsSend(ws, {
+            on:click|capture={() => wsSend(ws, {
                 category: "move",
                 robot: robot,
                 direction: "left"
             })}
-            use:clickoutside
-            on:clickoutside={() => showControls = false}
         />
     {/if}
 {/if}
