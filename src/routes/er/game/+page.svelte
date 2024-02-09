@@ -28,6 +28,7 @@
     let amHost: boolean = false;
     let round: number = 0;
     let currentGoal: Goal | null;
+    let myName: string;
     let m_demonstrator: string = "";
     let demo_moves: number = 0;
     let bids: Bid[] = []
@@ -83,6 +84,7 @@
                 case "check_in":
                     players = message.players.map((playerName) => [playerName, 0]);
                     amHost = message.is_host;
+                    myName = message.name;
                     gameCode = message.game_code;
                     gameConfig = message.game_config;
                     for (const goal of message.goals) {
@@ -96,6 +98,8 @@
                         board[bottom_wall.x][bottom_wall.y].bottom_wall = true;
                         board[bottom_wall.x][bottom_wall.y + 1].top_wall = true;
                     }
+                    board = board;
+                    console.log(board);
                     break;
                 case 'player_update':
                     if (message.add) {
@@ -109,7 +113,11 @@
                     for (const [robot, coord] of message.robots) {
                         board[robotPositions[robot].x][robotPositions[robot].y].robot = null;
                         board[coord.x][coord.y].robot = robot;
+                        robotPositions[robot] = coord;
+                        console.log(JSON.stringify(coord));
+                        console.log(`${[robotPositions[robot].x]}, ${[robotPositions[robot].y]} robot now ${board[robotPositions[robot].x][robotPositions[robot].y].robot}`);
                     }
+                    board = board;
                     break;
                 case 'timer':
                     clearInterval(interval);
@@ -162,7 +170,7 @@
 </script>
 
 <body class="min-h-screen bg-gradient-to-b from-background_dark to-background m-9">
-    <div class="grid grid-cols-8 grid-rows-4 gap-6">
+    <div class="grid grid-cols-7 grid-rows-4 gap-6">
 
         <!-- left panes -->
         <div class="grid grid-rows-subgrid grid-cols-subgrid row-span-4 col-span-2 gap-6">
@@ -188,21 +196,23 @@
                     {/each}
                     <div id="chatEnd"></div>
                 </div>
-                <input class="bg-accent" bind:value={chatInput} />
-                <button class="bg-accent" on:click={() => {
-                    wsSend(ws, {
-                        category: "chat",
-                        msg: chatInput
-                    });
-                    chatInput = "";
-                }}>
-                    send chat
-                </button>
+                <div class="flex items-center pt-4 gap-2">
+                    <input class="bg-accent w-4/5 shadow-inner rounded" bind:value={chatInput} />
+                    <button class="bg-accent rounded w-1/5 shadow hover:cursor-default hover:shadow-md" on:click={() => {
+                        wsSend(ws, {
+                            category: "chat",
+                            msg: chatInput
+                        });
+                        chatInput = "";
+                    }}>
+                        send
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- board -->
-        <div class="col-span-4 row-span-4 bg-primary rounded-lg p-6">
+        <div class="col-span-3 row-span-4 bg-{m_demonstrator === myName ? "danger" : "primary"} rounded-lg p-6">
             <div class="grid grid-cols-16 border-dark_grey border-2 border-solid shadow">
                 {#each Array(16) as _, y}
                 {#each Array(16) as _, x}
@@ -213,11 +223,11 @@
         </div>
 
         {#if round}
-            <TextDisplay title="timer" content={secondsToClockString(timer)}/>
-            <TextDisplay title="round" content={round.toString()}/>
+            <TextDisplay title="timer" content={secondsToClockString(timer)} textSize={6} />
+            <TextDisplay title="round" content={round.toString()} textSize={7} />
 
             <!-- goal display -->
-            <div class="bg-primary rounded-lg p-6 text-center w-full">
+            <div class="bg-primary rounded-lg p-6 text-center">
                 <p class="text-center pb-2 text-xl">goal</p>
                 <div class="shadow-inner bg-accent rounded min-h-[50%]">
                     <img 
@@ -229,19 +239,17 @@
             </div>
 
             <TextDisplay
-                title="presenting bid" 
+                title="showing bid" 
                 content={m_demonstrator ? `${m_demonstrator}: ${demo_moves}` : ""} 
             />
 
             <!-- queued bids -->
-            <div class="col-span-2 bg-primary rounded-lg p-6 text-center w-full">
+            <div class="col-span-2 bg-primary rounded-lg p-6 text-center">
                 <p class="text-center pb-2 text-xl">queued bids</p>
                 <div class="shadow-inner bg-accent rounded min-h-[50%]">
-                    <ol class="list-decimal pl-6">
-                        {#each bids as bid}
-                            <li class="py-1">{`${bid.player}: ${bid.moves}`}</li>
-                        {/each}
-                    </ol>
+                    {#each bids as bid, rank}
+                        <p class="py-1">{`${rank + 1}. ${bid.player}: ${bid.moves}`}</p>
+                    {/each}
                 </div>
             </div>
 
@@ -254,7 +262,7 @@
                     placeholder="enter bid"
                     bind:value={bidInput}
                 />
-                <button class="bg-accent rounded p-3 w-full mt-2 hover:shadow" on:click={() => {
+                <button class="bg-accent border-background rounded p-3 w-full mt-2 hover:shadow" on:click={() => {
                         wsSend(ws, {
                             category: "bid",
                             moves: parseInt(bidInput)
@@ -288,7 +296,7 @@
             <div class="col-span-2 p-6 bg-primary rounded-lg">
                 {#if amHost}
                     <button
-                        class="rounded bg-accent p-4 w-full h-full text-center shadow hover:shadow-lg text-8xl font-light"
+                        class="rounded bg-accent border-background p-4 w-full h-full text-center shadow hover:shadow-lg text-8xl font-light"
                         on:click={() => {
                             wsSend(ws, {
                                 category: "start"
