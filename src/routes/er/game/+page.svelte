@@ -198,13 +198,13 @@
 </script>
 
 <body class="min-h-screen bg-gradient-to-b from-background_dark to-background m-9">
-    <div class="grid grid-cols-7 grid-rows-4 gap-6">
+    <div class="grid grid-cols-7 grid-rows-4 gap-6 max-h-full">
         <!-- left panes -->
-        <div class="grid grid-rows-subgrid grid-cols-subgrid row-span-4 col-span-2 gap-6">
+        <div class="grid grid-rows-subgrid grid-cols-subgrid row-span-4 col-span-2 gap-6 max-h-full">
             <!-- leaderboard -->
             <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6">
                 <p class="text-xl text-center pb-2">leaderboard</p>
-                <div class="overflow-y-scroll bg-accent shadow-inner rounded min-h-max h-max">
+                <div class="overflow-y-scroll bg-accent shadow-inner rounded min-h-80 max-h-80">
                     <ol class="list-decimal pl-6">
                         {#each players as [playerName, score]}
                             <li class="py-2">{`${playerName}: ${score}`}</li>
@@ -214,19 +214,20 @@
             </div>
 
             <!-- chat -->
-            <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 h-full">
+            <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 h-full max-h-full overflow-hidden">
                 <p class="text-xl text-center pb-2">chat</p>
                 <div
-                    class="overflow-y-scroll bg-accent shadow-inner rounded min-h-[75%] max-h-[75%]"
+                    class="overflow-y-scroll bg-accent shadow-inner rounded min-h-[17rem] max-h-[17rem]"
                 >
                     {#each log as msg}
-                        <p>{msg}</p>
+                        <p class="relative pl-1 text-wrap text">{msg}</p>
                     {/each}
                     <div id="chatEnd" />
                 </div>
                 <div class="flex items-center pt-4 gap-2">
                     <input
                         class="bg-accent w-4/5 shadow-inner rounded"
+                        maxlength=200
                         bind:value={chatInput}
                         on:focus={() => {
                             chatFocused = true;
