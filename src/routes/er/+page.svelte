@@ -23,22 +23,12 @@
         >
             <div class="grid grid-cols-2 grid-rows-2 gap-7 text-center">
                 <a class="align-middle" href="/er/help">how to play</a>
-                <a class="align-middle" href="http://whirlwinda.st/er">
-                    whirlwindaster
-                </a>
+                <a class="align-middle" href="http://whirlwinda.st/er"> whirlwindaster </a>
                 <a href="https://github.com/whirlwindaster">
-                    <img
-                        class="block mx-auto w-16 h-16"
-                        src={github_logo}
-                        alt="GitHub Logo"
-                    />
+                    <img class="block mx-auto w-16 h-16" src={github_logo} alt="GitHub Logo" />
                 </a>
                 <a href="mailto:whirlwindaster@gmail.com">
-                    <img
-                        class="block mx-auto w-16 h-16"
-                        src={email_icon}
-                        alt="Mail Icon"
-                    />
+                    <img class="block mx-auto w-16 h-16" src={email_icon} alt="Mail Icon" />
                 </a>
             </div>
         </div>

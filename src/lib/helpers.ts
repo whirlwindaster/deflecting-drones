@@ -1,10 +1,10 @@
-import type { GenericMessageToAPI } from "./types";
+import type { GenericMessageToAPI } from './types';
 
 export function toMilliseconds(sec: number): number {
     return sec * 1000;
 }
 
-export function toSeconds(ms: number): number { 
+export function toSeconds(ms: number): number {
     return ms / 1000;
 }
 
@@ -17,6 +17,6 @@ export function wsSend(ws: WebSocket, message: GenericMessageToAPI) {
     if (ws.readyState !== 1) {
         return;
     }
-    
+
     ws.send(JSON.stringify(message));
 }
