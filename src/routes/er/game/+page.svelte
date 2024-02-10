@@ -50,7 +50,6 @@
     let chatInput: string = "";
 
     function scrollChat() {
-        console.log('scrolling');
         (document.getElementById("chatEnd") as HTMLElement).scrollIntoView({ block: "nearest", inline: "nearest" });
     }
 
@@ -64,13 +63,9 @@
         );
 
         ws.onerror = () => {
-            console.log('err');
-        };
-        ws.onopen = () => {
-            console.log('opened');
+            window.alert("websocket connection failed. create or join a new game")
         };
         ws.onmessage = (m) => {
-            console.log(`message received: ${m.data}`);
             const message = JSON.parse(m.data) as GenericMessageToPlayer;
             if (message.log) {
                 log = [...log, `[SERVER]: ${message.log}`];
@@ -100,7 +95,6 @@
                         board[bottom_wall.x][bottom_wall.y + 1].top_wall = true;
                     }
                     board = board;
-                    console.log(board);
                     break;
                 case 'player_update':
                     if (message.add) {
@@ -115,9 +109,8 @@
                         board[robotPositions[robot].x][robotPositions[robot].y].robot = null;
                         board[coord.x][coord.y].robot = robot;
                         robotPositions[robot] = coord;
-                        console.log(JSON.stringify(coord));
-                        console.log(`${[robotPositions[robot].x]}, ${[robotPositions[robot].y]} robot now ${board[robotPositions[robot].x][robotPositions[robot].y].robot}`);
                     }
+                    // TODO make sure this assignment is needed
                     board = board;
                     break;
                 case 'timer':
