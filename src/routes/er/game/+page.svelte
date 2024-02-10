@@ -71,7 +71,7 @@
 
     onMount(() => {
         ws = new WebSocket(
-            `ws://dd-api.whirlwinda.st/er/ws?uuid=${localStorage.getItem('uuid')}`
+            `wss://dd-api.whirlwinda.st/er/ws?uuid=${localStorage.getItem('uuid')}`
         );
 
         ws.onerror = () => {

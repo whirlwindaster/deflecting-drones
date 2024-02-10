@@ -16,7 +16,7 @@
             demo_timeout: (document.getElementById('demo_timeout') as HTMLInputElement).value
         };
 
-        const resp = await fetch(`http://dd-api.whirlwinda.st/er/create`, {
+        const resp = await fetch(`https://dd-api.whirlwinda.st/er/create`, {
             method: 'POST',
             body: JSON.stringify(jsonData)
         });

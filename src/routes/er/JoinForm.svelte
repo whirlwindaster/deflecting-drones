@@ -10,7 +10,7 @@
             game_code: (document.getElementById('game_code') as HTMLInputElement).value
         };
 
-        const resp = await fetch(`http://dd-api.whirlwinda.st/er/join`, {
+        const resp = await fetch(`https://dd-api.whirlwinda.st/er/join`, {
             method: 'POST',
             body: JSON.stringify(jsonData)
         });
