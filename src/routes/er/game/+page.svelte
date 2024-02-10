@@ -1,6 +1,15 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { DEFAULT_CONFIG, type Coordinate, type GameConfig, type GenericMessageToPlayer, type RobotColor, type Tile, type Bid, type Goal } from '$lib/types';
+    import {
+        DEFAULT_CONFIG,
+        type Coordinate,
+        type GameConfig,
+        type GenericMessageToPlayer,
+        type RobotColor,
+        type Tile,
+        type Bid,
+        type Goal
+    } from '$lib/types';
     import TileComponent from './TileComponent.svelte';
     import { demonstrator } from '$lib/stores';
     import TextDisplay from './TextDisplay.svelte';
@@ -8,7 +17,7 @@
 
     let board: Tile[][] = [];
     for (let x = 0; x < 16; x++) {
-        const row: Tile[] = []
+        const row: Tile[] = [];
         for (let y = 0; y < 16; y++) {
             row.push({
                 goal: null,
@@ -29,28 +38,31 @@
     let round: number = 0;
     let currentGoal: Goal | null;
     let myName: string;
-    let m_demonstrator: string = "";
+    let m_demonstrator: string = '';
     let demo_moves: number = 0;
-    let bids: Bid[] = []
-    let gameCode: string = "";
+    let bids: Bid[] = [];
+    let gameCode: string = '';
     let timer: number = 0;
     let gameConfig: GameConfig = DEFAULT_CONFIG;
     let robotPositions: Record<RobotColor, Coordinate> = {
-        r: {x: 0, y: 0},
-        y: {x: 0, y: 0},
-        g: {x: 0, y: 0},
-        u: {x: 0, y: 0},
-        b: {x: 0, y: 0},
+        r: { x: 0, y: 0 },
+        y: { x: 0, y: 0 },
+        g: { x: 0, y: 0 },
+        u: { x: 0, y: 0 },
+        b: { x: 0, y: 0 }
     };
 
-    demonstrator.subscribe((playerName) => m_demonstrator = playerName);
+    demonstrator.subscribe((playerName) => (m_demonstrator = playerName));
 
     let interval: NodeJS.Timer | number;
-    let bidInput: string = "";
-    let chatInput: string = "";
+    let bidInput: string = '';
+    let chatInput: string = '';
 
     function scrollChat() {
-        (document.getElementById("chatEnd") as HTMLElement).scrollIntoView({ block: "nearest", inline: "nearest" });
+        (document.getElementById('chatEnd') as HTMLElement).scrollIntoView({
+            block: 'nearest',
+            inline: 'nearest'
+        });
     }
 
     let chatFocused = false;
@@ -63,7 +75,7 @@
         );
 
         ws.onerror = () => {
-            window.alert("websocket connection failed. create or join a new game")
+            window.alert('websocket connection failed. create or join a new game');
         };
         ws.onmessage = (m) => {
             const message = JSON.parse(m.data) as GenericMessageToPlayer;
@@ -72,12 +84,12 @@
                 scrollChat();
             }
             switch (message.category) {
-                case "chat":
+                case 'chat':
                     //log = [`${message.name}: ${message.msg}`, ...log];
                     log = [...log, `${message.name}: ${message.msg}`];
                     scrollChat();
                     break;
-                case "check_in":
+                case 'check_in':
                     players = message.players.map((playerName) => [playerName, 0]);
                     amHost = message.is_host;
                     myName = message.name;
@@ -99,8 +111,7 @@
                 case 'player_update':
                     if (message.add) {
                         players = [...players, [message.name, 0]];
-                    }
-                    else {
+                    } else {
                         players = players.filter(([playerName, _]) => playerName !== message.name);
                     }
                     break;
@@ -125,7 +136,7 @@
                     currentGoal = message.goal;
                     bids = [];
                     round += 1;
-                    demonstrator.set("");
+                    demonstrator.set('');
                     demo_moves = 0;
                     break;
                 case 'bid':
@@ -152,45 +163,44 @@
                             break;
                         }
                     }
-                    players = players.sort(([_, aScore], [__, bScore]) => bScore > aScore ? 1 : -1);
+                    players = players.sort(([_, aScore], [__, bScore]) =>
+                        bScore > aScore ? 1 : -1
+                    );
                     break;
             }
         };
 
         function handleKeyboard(e: KeyboardEvent) {
-            if (e.key === "Enter") {
+            if (e.key === 'Enter') {
                 if (chatFocused) {
                     wsSend(ws, {
-                        category: "chat",
+                        category: 'chat',
                         msg: chatInput
                     });
-                    chatInput = "";
-                }
-                else if (round) {
+                    chatInput = '';
+                } else if (round) {
                     wsSend(ws, {
-                        category: "bid",
+                        category: 'bid',
                         moves: parseInt(bidInput)
                     });
-                    bidInput = "";
+                    bidInput = '';
                 }
             }
         }
 
-        document.addEventListener("keydown", handleKeyboard);
+        document.addEventListener('keydown', handleKeyboard);
 
         return () => {
-            document.removeEventListener("keydown", handleKeyboard);
+            document.removeEventListener('keydown', handleKeyboard);
             ws.close();
-        }
+        };
     });
 </script>
 
 <body class="min-h-screen bg-gradient-to-b from-background_dark to-background m-9">
     <div class="grid grid-cols-7 grid-rows-4 gap-6">
-
         <!-- left panes -->
         <div class="grid grid-rows-subgrid grid-cols-subgrid row-span-4 col-span-2 gap-6">
-
             <!-- leaderboard -->
             <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6">
                 <p class="text-xl text-center pb-2">leaderboard</p>
@@ -206,21 +216,35 @@
             <!-- chat -->
             <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 h-full">
                 <p class="text-xl text-center pb-2">chat</p>
-                <div class="overflow-y-scroll bg-accent shadow-inner rounded min-h-[75%] max-h-[75%]">
+                <div
+                    class="overflow-y-scroll bg-accent shadow-inner rounded min-h-[75%] max-h-[75%]"
+                >
                     {#each log as msg}
                         <p>{msg}</p>
                     {/each}
-                    <div id="chatEnd"></div>
+                    <div id="chatEnd" />
                 </div>
                 <div class="flex items-center pt-4 gap-2">
-                    <input class="bg-accent w-4/5 shadow-inner rounded" bind:value={chatInput} on:focus={() => { chatFocused = true; }} on:blur={() => { chatFocused = false; }} />
-                    <button class="bg-accent rounded w-1/5 shadow hover:cursor-default hover:shadow-md" on:click={() => {
-                        wsSend(ws, {
-                            category: "chat",
-                            msg: chatInput
-                        });
-                        chatInput = "";
-                    }}>
+                    <input
+                        class="bg-accent w-4/5 shadow-inner rounded"
+                        bind:value={chatInput}
+                        on:focus={() => {
+                            chatFocused = true;
+                        }}
+                        on:blur={() => {
+                            chatFocused = false;
+                        }}
+                    />
+                    <button
+                        class="bg-accent rounded w-1/5 shadow hover:cursor-default hover:shadow-md"
+                        on:click={() => {
+                            wsSend(ws, {
+                                category: 'chat',
+                                msg: chatInput
+                            });
+                            chatInput = '';
+                        }}
+                    >
                         send
                     </button>
                 </div>
@@ -228,12 +252,16 @@
         </div>
 
         <!-- board -->
-        <div class="col-span-3 row-span-4 bg-{m_demonstrator === myName ? "danger" : "primary"} rounded-lg p-6">
+        <div
+            class="col-span-3 row-span-4 bg-{m_demonstrator === myName
+                ? 'danger'
+                : 'primary'} rounded-lg p-6"
+        >
             <div class="grid grid-cols-16 border-dark_grey border-2 border-solid shadow">
                 {#each Array(16) as _, y}
-                {#each Array(16) as _, x}
-                    <TileComponent tile={board[x][y]} ws={ws}/>
-                {/each}
+                    {#each Array(16) as _, x}
+                        <TileComponent tile={board[x][y]} {ws} />
+                    {/each}
                 {/each}
             </div>
         </div>
@@ -246,17 +274,19 @@
             <div class="bg-primary rounded-lg p-6 text-center">
                 <p class="text-center pb-2 text-xl">goal</p>
                 <div class="shadow-inner bg-accent rounded min-h-[70%]">
-                    <img 
+                    <img
                         class="mx-auto w-24 h-24"
-                        src={`/goals/${currentGoal?.color || "m"}_${currentGoal?.shape || "vortex"}.svg`} 
-                        alt={`${currentGoal?.color || "m"} ${currentGoal?.shape || "vortex"} goal`}
+                        src={`/goals/${currentGoal?.color || 'm'}_${
+                            currentGoal?.shape || 'vortex'
+                        }.svg`}
+                        alt={`${currentGoal?.color || 'm'} ${currentGoal?.shape || 'vortex'} goal`}
                     />
                 </div>
             </div>
 
             <TextDisplay
-                title="showing bid" 
-                content={m_demonstrator ? `${m_demonstrator}: ${demo_moves}` : ""} 
+                title="showing bid"
+                content={m_demonstrator ? `${m_demonstrator}: ${demo_moves}` : ''}
             />
 
             <!-- queued bids -->
@@ -270,22 +300,27 @@
             </div>
 
             <!-- bid submit -->
-            <div class="flex flex-col justify-center items-center col-span-2 bg-primary min-w-full rounded-lg p-6">
+            <div
+                class="flex flex-col justify-center items-center col-span-2 bg-primary min-w-full rounded-lg p-6"
+            >
                 <input
                     class="bg-accent shadow-inner rounded w-full p-3 mb-2 text-center"
                     type="number"
-                    min="2" max="500"
+                    min="2"
+                    max="500"
                     placeholder="enter bid"
                     bind:value={bidInput}
                 />
-                <button class="bg-accent border-background rounded p-3 w-full mt-2 hover:shadow" on:click={() => {
+                <button
+                    class="bg-accent border-background rounded p-3 w-full mt-2 hover:shadow"
+                    on:click={() => {
                         wsSend(ws, {
-                            category: "bid",
+                            category: 'bid',
                             moves: parseInt(bidInput)
                         });
-                        bidInput = "";
-                    }
-                }>
+                        bidInput = '';
+                    }}
+                >
                     submit bid!
                 </button>
             </div>
@@ -302,9 +337,19 @@
             <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 text-center">
                 <div class="bg-accent rounded shadow-inner h-full">
                     <p class="text-xl p-6">rounds: {gameConfig.num_rounds}</p>
-                    <p class="text-xl p-6">pre-bid timeout: {secondsToClockString(toSeconds(gameConfig.pre_bid_timeout))}</p>
-                    <p class="text-xl p-6">post-bid timeout: {secondsToClockString(toSeconds(gameConfig.post_bid_timeout))}</p>
-                    <p class="text-xl p-6">demo timeout: {secondsToClockString(toSeconds(gameConfig.demo_timeout))}</p>
+                    <p class="text-xl p-6">
+                        pre-bid timeout: {secondsToClockString(
+                            toSeconds(gameConfig.pre_bid_timeout)
+                        )}
+                    </p>
+                    <p class="text-xl p-6">
+                        post-bid timeout: {secondsToClockString(
+                            toSeconds(gameConfig.post_bid_timeout)
+                        )}
+                    </p>
+                    <p class="text-xl p-6">
+                        demo timeout: {secondsToClockString(toSeconds(gameConfig.demo_timeout))}
+                    </p>
                 </div>
             </div>
 
@@ -315,14 +360,16 @@
                         class="rounded bg-accent border-background p-4 w-full h-full text-center shadow hover:shadow-lg text-8xl font-light"
                         on:click={() => {
                             wsSend(ws, {
-                                category: "start"
+                                category: 'start'
                             });
-                        }
-                    }>
+                        }}
+                    >
                         start!
                     </button>
                 {:else}
-                    <button class="rounded bg-grey p-4 w-full h-full text-center shadow mx-auto text-8xl font-light cursor-default">
+                    <button
+                        class="rounded bg-grey p-4 w-full h-full text-center shadow mx-auto text-8xl font-light cursor-default"
+                    >
                         start!
                     </button>
                 {/if}

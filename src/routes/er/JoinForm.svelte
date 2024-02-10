@@ -4,8 +4,7 @@
     async function onSubmit(e: SubmitEvent) {
         e.preventDefault();
 
-        const username = (document.getElementById('join_name') as HTMLInputElement)
-            .value;
+        const username = (document.getElementById('join_name') as HTMLInputElement).value;
         const jsonData: Record<string, string> = {
             name: username,
             game_code: (document.getElementById('game_code') as HTMLInputElement).value
@@ -47,7 +46,5 @@
         name="game_code"
     />
     <input type="hidden" name="join" value="true" />
-    <button class="bg-accent rounded p-3 w-full mt-5 hover:shadow" type="submit">
-        join!
-    </button>
+    <button class="bg-accent rounded p-3 w-full mt-5 hover:shadow" type="submit"> join! </button>
 </form>

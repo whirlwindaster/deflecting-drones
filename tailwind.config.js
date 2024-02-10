@@ -13,9 +13,8 @@ export default {
                 danger: '#f87171'
             },
             gridTemplateColumns: {
-                '16': 'repeat(16, minmax(0, 1fr))',
+                16: 'repeat(16, minmax(0, 1fr))'
             }
-            
         }
     },
     safelist: [
