@@ -71,7 +71,7 @@
 
     onMount(() => {
         ws = new WebSocket(
-            `ws://${import.meta.env.VITE_API_URL}ws?uuid=${localStorage.getItem('uuid')}`
+            `ws://dd-api.whirlwinda.st/er/ws?uuid=${localStorage.getItem('uuid')}`
         );
 
         ws.onerror = () => {
