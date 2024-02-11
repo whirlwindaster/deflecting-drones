@@ -20,3 +20,6 @@ export function wsSend(ws: WebSocket, message: GenericMessageToAPI) {
 
     ws.send(JSON.stringify(message));
 }
+
+export const API_HTTP_URL = 'https://dd-api.whirlwinda.st/er';
+export const API_WS_URL = 'wss://dd-api.whirlwinda.st/er/ws';

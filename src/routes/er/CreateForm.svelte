@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import { API_HTTP_URL } from '$lib/helpers';
     import { myName, uuid } from '$lib/stores';
 
     async function onSubmit(e: SubmitEvent) {
@@ -16,7 +17,7 @@
             demo_timeout: (document.getElementById('demo_timeout') as HTMLInputElement).value
         };
 
-        const resp = await fetch(`https://dd-api.whirlwinda.st/er/create`, {
+        const resp = await fetch(`${API_HTTP_URL}/create`, {
             method: 'POST',
             body: JSON.stringify(jsonData)
         });

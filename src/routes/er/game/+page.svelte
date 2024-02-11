@@ -14,6 +14,8 @@
     import { demonstrator } from '$lib/stores';
     import TextDisplay from './TextDisplay.svelte';
     import { secondsToClockString, toSeconds, wsSend } from '$lib/helpers';
+    import { API_WS_URL } from '$lib/helpers';
+    import { goto } from '$app/navigation';
 
     let board: Tile[][] = [];
     for (let x = 0; x < 16; x++) {
@@ -71,11 +73,12 @@
 
     onMount(() => {
         ws = new WebSocket(
-            `wss://dd-api.whirlwinda.st/er/ws?uuid=${localStorage.getItem('uuid')}`
+            `${API_WS_URL}?uuid=${localStorage.getItem('uuid')}`
         );
 
         ws.onerror = () => {
             window.alert('websocket connection failed. create or join a new game');
+            goto("/er");
         };
         ws.onmessage = (m) => {
             const message = JSON.parse(m.data) as GenericMessageToPlayer;

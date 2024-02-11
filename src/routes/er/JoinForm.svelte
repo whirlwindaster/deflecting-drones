@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import { API_HTTP_URL } from '$lib/helpers';
 
     async function onSubmit(e: SubmitEvent) {
         e.preventDefault();
@@ -10,7 +11,7 @@
             game_code: (document.getElementById('game_code') as HTMLInputElement).value
         };
 
-        const resp = await fetch(`https://dd-api.whirlwinda.st/er/join`, {
+        const resp = await fetch(`${API_HTTP_URL}/join`, {
             method: 'POST',
             body: JSON.stringify(jsonData)
         });
