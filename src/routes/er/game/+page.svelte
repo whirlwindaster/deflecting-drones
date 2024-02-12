@@ -302,7 +302,7 @@
         <!-- queued bids -->
         <div class="col-span-2 bg-primary rounded-lg p-6 text-center max-h-full overflow-hidden">
             <p class="text-center pb-2 text-xl">queued bids</p>
-            <div class="overflow-y-scroll shadow-inner bg-accent rounded min-h-32 max-h-32">
+            <div class="overflow-y-scroll shadow-inner bg-accent rounded min-h-24 max-h-24">
                 {#each bids as bid, rank}
                     <p class="py-1">{`${rank + 1}. ${bid.player}: ${bid.moves}`}</p>
                 {/each}
