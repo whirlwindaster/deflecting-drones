@@ -55,9 +55,10 @@ export interface CheckIn extends BaseMessageToPlayer {
     category: 'check_in';
     name: string;
     game_code: string;
+    round: number;
     is_host: boolean;
     game_config: GameConfig;
-    players: string[];
+    players: [string, number][];
     right_walls: Coordinate[];
     bottom_walls: Coordinate[];
     goals: Goal[];
@@ -66,6 +67,10 @@ export interface PlayerUpdate extends BaseMessageToPlayer {
     category: 'player_update';
     name: string;
     add: boolean;
+}
+export interface ConfigUpdate extends BaseMessageToPlayer {
+    category: 'config_update',
+    game_config: GameConfig;
 }
 export interface RobotUpdate extends BaseMessageToPlayer {
     category: 'robot_update';
@@ -107,6 +112,7 @@ export type GenericMessageToPlayer =
     | CheckIn
     | PlayerUpdate
     | RobotUpdate
+    | ConfigUpdate
     | Timer
     | Start
     | NewRound
@@ -126,8 +132,12 @@ export interface MoveRequest {
     robot: RobotColor;
     direction: Direction;
 }
+export interface ConfigChangeRequest {
+    category: 'config'
+    config: GameConfig
+}
 export interface ChatRequest {
     category: 'chat';
     msg: string;
 }
-export type GenericMessageToAPI = StartRequest | BidRequest | MoveRequest | ChatRequest;
+export type GenericMessageToAPI = StartRequest | BidRequest | MoveRequest | ConfigChangeRequest | ChatRequest;

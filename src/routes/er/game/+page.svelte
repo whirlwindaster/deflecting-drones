@@ -88,14 +88,17 @@
             }
             switch (message.category) {
                 case 'chat':
-                    //log = [`${message.name}: ${message.msg}`, ...log];
                     log = [...log, `${message.name}: ${message.msg}`];
                     scrollChat();
                     break;
+                case 'config_update':
+                    gameConfig = message.game_config;
+                    break;
                 case 'check_in':
-                    players = message.players.map((playerName) => [playerName, 0]);
+                    players = message.players;
                     amHost = message.is_host;
                     myName = message.name;
+                    round = message.round;
                     gameCode = message.game_code;
                     gameConfig = message.game_config;
                     for (const goal of message.goals) {
