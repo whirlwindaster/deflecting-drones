@@ -1,23 +1,12 @@
-# create-svelte
+# Deflecting Drones
 
-Everything you need to build a Svelte project, powered by
-[`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A web-based implementation of the board game
+[`Ricochet Robots`](https://en.wikipedia.org/wiki/Ricochet_Robots)
+built with Svelte and Sveltekit and deployed on Deno Deploy at [`https://dd.whirlwinda.st`](https://dd.whirlwinda.st)
 
-## Creating a project
+## Local Development
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or
+Once you've installed dependencies with `npm install` (or
 `pnpm install` or `yarn`), start a development server:
 
 ```bash
@@ -29,13 +18,10 @@ npm run dev -- --open
 
 ## Building
 
-To create a production version of your app:
+To build a production version of the app:
 
 ```bash
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an
-> [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+You can preview the production build with `deno run --allow-env --allow-read --allow-net build/mod.ts`.
