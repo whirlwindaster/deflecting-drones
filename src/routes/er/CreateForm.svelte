@@ -1,7 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { API_HTTP_URL } from '$lib/helpers';
-    import { myName, uuid } from '$lib/stores';
 
     async function onSubmit(e: SubmitEvent) {
         e.preventDefault();
@@ -28,8 +27,6 @@
             return;
         }
 
-        myName.set(username);
-        uuid.set(respText);
         localStorage.setItem('username', username);
         localStorage.setItem('uuid', respText);
 

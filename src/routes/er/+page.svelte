@@ -5,8 +5,8 @@
     import email_icon from '$lib/images/email_icon.svg';
 </script>
 
-<body class="min-h-screen bg-gradient-to-b from-background_dark to-background mt-9">
-    <div class="grid grid-cols-2 grid-rows-1 gap-8 p-8">
+<!--body class="min-h-screen bg-gradient-to-b from-background_dark to-background"-->
+    <div class="grid grid-cols-2 grid-rows-1 gap-8 p-8 mt-16 absolute ">
         <div
             class="row-span-2 bg-primary rounded-lg p-6 shadow-xl hover:scale-105 transition duration-500"
         >
@@ -33,4 +33,4 @@
             </div>
         </div>
     </div>
-</body>
+<!--/body-->

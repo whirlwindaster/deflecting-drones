@@ -130,7 +130,4 @@ export interface ChatRequest {
     category: 'chat';
     msg: string;
 }
-export interface Leave {
-    category: 'leave';
-}
-export type GenericMessageToAPI = StartRequest | BidRequest | MoveRequest | ChatRequest | Leave;
+export type GenericMessageToAPI = StartRequest | BidRequest | MoveRequest | ChatRequest;

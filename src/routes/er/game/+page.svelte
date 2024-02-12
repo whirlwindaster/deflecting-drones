@@ -54,9 +54,9 @@
         b: { x: 0, y: 0 }
     };
 
-    demonstrator.subscribe((playerName) => (m_demonstrator = playerName));
+    demonstrator.subscribe((playerName) => { m_demonstrator = playerName; });
 
-    let interval: NodeJS.Timer | number;
+    let interval_id: NodeJS.Timer | number;
     let bidInput: string = '';
     let chatInput: string = '';
 
@@ -128,11 +128,11 @@
                     board = board;
                     break;
                 case 'timer':
-                    clearInterval(interval);
+                    clearInterval(interval_id);
                     timer = message.seconds;
-                    interval = setInterval(() => {
+                    interval_id = setInterval(() => {
                         timer -= 1;
-                        if (timer === 0) clearInterval(interval);
+                        if (timer === 0) clearInterval(interval_id);
                     }, 1000);
                     break;
                 case 'new_round':
@@ -172,6 +172,11 @@
                     break;
             }
         };
+        ws.onclose = () => {
+            clearInterval(interval_id);
+            timer = 0;
+            demonstrator.set("");
+        }
 
         function handleKeyboard(e: KeyboardEvent) {
             if (e.key === 'Enter') {
@@ -200,8 +205,8 @@
     });
 </script>
 
-<body class="min-h-screen bg-gradient-to-b from-background_dark to-background m-9">
-    <div class="grid grid-cols-7 grid-rows-4 gap-6 max-h-full">
+<!--body class="min-h-screen bg-gradient-to-b from-background_dark to-background m-9"!-->
+    <div class="grid grid-cols-7 grid-rows-4 gap-6 p-8 max-h-full">
         <!-- left panes -->
         <div class="grid grid-rows-subgrid grid-cols-subgrid row-span-4 col-span-2 gap-6 max-h-full">
             <!-- leaderboard -->
@@ -223,7 +228,7 @@
                     class="overflow-y-scroll bg-accent shadow-inner rounded min-h-[17rem] max-h-[17rem]"
                 >
                     {#each log as msg}
-                        <p class="relative pl-1 text-wrap text">{msg}</p>
+                        <p class="relative pl-1 text-wrap">{msg}</p>
                     {/each}
                     <div id="chatEnd" />
                 </div>
@@ -294,9 +299,9 @@
             />
 
             <!-- queued bids -->
-            <div class="col-span-2 bg-primary rounded-lg p-6 text-center">
+            <div class="col-span-2 bg-primary rounded-lg p-6 text-center max-h-full overflow-hidden">
                 <p class="text-center pb-2 text-xl">queued bids</p>
-                <div class="shadow-inner bg-accent rounded min-h-[70%]">
+                <div class="overflow-y-scroll shadow-inner bg-accent rounded min-h-32 max-h-32">
                     {#each bids as bid, rank}
                         <p class="py-1">{`${rank + 1}. ${bid.player}: ${bid.moves}`}</p>
                     {/each}
@@ -380,4 +385,4 @@
             </div>
         {/if}
     </div>
-</body>
+<!--/body-->
