@@ -66,11 +66,11 @@
     <input
         class="bg-accent shadow-inner rounded w-full p-3 mb-3"
         type="number"
-        min="15"
-        max="600"
+        min="100"
+        max="500"
         id="pre_bid_timeout"
         name="pre_bid_timeout"
-        step="15"
+        step="50"
         value="300"
     />
     <label for="post_bid_timeout">seconds before demonstration</label>
@@ -78,7 +78,7 @@
         class="bg-accent shadow-inner rounded w-full p-3 mb-3"
         type="number"
         min="15"
-        max="600"
+        max="105"
         id="post_bid_timeout"
         name="post_bid_timeout"
         step="15"
@@ -88,12 +88,12 @@
     <input
         class="bg-accent shadow-inner rounded w-full p-3 mb-3"
         type="number"
-        min="15"
-        max="600"
+        min="30"
+        max="90"
         id="demo_timeout"
         name="demo_timeout"
         step="15"
-        value="30"
+        value="60"
     />
     <input type="hidden" name="create" value="true" />
     <button class="bg-accent rounded p-3 w-full mt-5 hover:shadow" type="submit"> create! </button>

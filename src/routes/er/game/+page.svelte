@@ -72,7 +72,7 @@
     }
 
     let ws: WebSocket;
-    let sendConfig: () => void = () => {}
+    let sendConfig: () => void = () => {};
 
     onMount(() => {
         ws = new WebSocket(`${API_WS_URL}?uuid=${localStorage.getItem('uuid')}`);
@@ -83,8 +83,8 @@
                     category: 'config',
                     config: gameConfig
                 });
-            }
-        }
+            };
+        };
 
         ws.onerror = () => {
             window.alert('websocket connection failed. create or join a new game');
@@ -360,20 +360,51 @@
         <!-- game config -->
         <div class="col-span-2 row-span-2 bg-primary rounded-lg p-6 text-center">
             <div class="bg-accent rounded shadow-inner h-full">
-                <p class="text-xl p-6">rounds: {gameConfig.num_rounds}</p>
-                <input type="range" min=1 max=16 on:change={sendConfig} bind:value={gameConfig.num_rounds} />
-                <p class="text-xl p-6">
+                <p class="text-xl p-4">rounds: {gameConfig.num_rounds}</p>
+                <input
+                    type="range"
+                    class="w-4/5 border-transparent"
+                    min="1"
+                    max="16"
+                    on:change={sendConfig}
+                    bind:value={gameConfig.num_rounds}
+                />
+                <p class="text-xl p-4">
                     pre-bid timeout: {secondsToClockString(toSeconds(gameConfig.pre_bid_timeout))}
                 </p>
-                <input type="range" min="100000" max="500000" step="50000" on:change={sendConfig} bind:value={gameConfig.pre_bid_timeout} />
-                <p class="text-xl p-6">
+                <input
+                    type="range"
+                    class="w-4/5"
+                    min="100000"
+                    max="500000"
+                    step="50000"
+                    on:change={sendConfig}
+                    bind:value={gameConfig.pre_bid_timeout}
+                />
+                <p class="text-xl p-4">
                     post-bid timeout: {secondsToClockString(toSeconds(gameConfig.post_bid_timeout))}
                 </p>
-                <input type="range" min="15000" max="105000" step="15000" on:change={sendConfig} bind:value={gameConfig.post_bid_timeout} />
-                <p class="text-xl p-6">
+                <input
+                    type="range"
+                    class="w-4/5"
+                    min="15000"
+                    max="105000"
+                    step="15000"
+                    on:change={sendConfig}
+                    bind:value={gameConfig.post_bid_timeout}
+                />
+                <p class="text-xl p-4">
                     demo timeout: {secondsToClockString(toSeconds(gameConfig.demo_timeout))}
                 </p>
-                <input type="range" min="30000" max="90000" step="5000" on:change={sendConfig} bind:value={gameConfig.demo_timeout} />
+                <input
+                    type="range"
+                    class="w-4/5"
+                    min="30000"
+                    max="90000"
+                    step="5000"
+                    on:change={sendConfig}
+                    bind:value={gameConfig.demo_timeout}
+                />
             </div>
         </div>
 
