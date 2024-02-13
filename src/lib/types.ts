@@ -69,7 +69,7 @@ export interface PlayerUpdate extends BaseMessageToPlayer {
     add: boolean;
 }
 export interface ConfigUpdate extends BaseMessageToPlayer {
-    category: 'config_update',
+    category: 'config_update';
     game_config: GameConfig;
 }
 export interface RobotUpdate extends BaseMessageToPlayer {
@@ -133,11 +133,16 @@ export interface MoveRequest {
     direction: Direction;
 }
 export interface ConfigChangeRequest {
-    category: 'config'
-    config: GameConfig
+    category: 'config';
+    config: GameConfig;
 }
 export interface ChatRequest {
     category: 'chat';
     msg: string;
 }
-export type GenericMessageToAPI = StartRequest | BidRequest | MoveRequest | ConfigChangeRequest | ChatRequest;
+export type GenericMessageToAPI =
+    | StartRequest
+    | BidRequest
+    | MoveRequest
+    | ConfigChangeRequest
+    | ChatRequest;
