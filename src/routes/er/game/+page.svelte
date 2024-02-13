@@ -366,6 +366,7 @@
                     class="w-4/5 border-transparent"
                     min="1"
                     max="16"
+                    disabled={!amHost}
                     on:change={sendConfig}
                     bind:value={gameConfig.num_rounds}
                 />
@@ -378,6 +379,7 @@
                     min="100000"
                     max="500000"
                     step="50000"
+                    disabled={!amHost}
                     on:change={sendConfig}
                     bind:value={gameConfig.pre_bid_timeout}
                 />
@@ -390,6 +392,7 @@
                     min="15000"
                     max="105000"
                     step="15000"
+                    disabled={!amHost}
                     on:change={sendConfig}
                     bind:value={gameConfig.post_bid_timeout}
                 />
@@ -402,6 +405,7 @@
                     min="30000"
                     max="90000"
                     step="5000"
+                    disabled={!amHost}
                     on:change={sendConfig}
                     bind:value={gameConfig.demo_timeout}
                 />
