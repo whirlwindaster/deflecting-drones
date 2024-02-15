@@ -5,9 +5,11 @@
     import solution2 from '$lib/images/solution2.png';
     import demonstration from '$lib/images/demonstration.png';
     import next_round from '$lib/images/next_round.png';
+    import { goto } from '$app/navigation';
 </script>
 
 <div class="bg-primary shadow-2xl rounded-lg p-8 m-8">
+    <h1 class="hover:cursor-pointer hover:underline text-center" on:click={() => { goto('/er'); }} on:keydown={() => { goto('/er'); }}> home</h1>
     <h1 class="text-4xl text-center my-2">How to Play</h1>
     <p class="text-xl my-2">
         When you first create or join a game, you will see a screen like this:
@@ -33,13 +35,14 @@
         The board state at the beginning of each round is a puzzle
         with the objective of getting the robot of the corresponding color to the goal displayed on the right
         (in this case, the green moon) by moving the robots. A robot can move up, down, left, or right, but once it moves,
-        it cannot stop until it hits a wall or another robot.
+        it cannot stop until it hits a wall or another robot. For the rainbow goal, the board can be solved by
+        moving any robot to it.
     </p>
     <p class="text-xl my-2">
         In the allotted time, you will calculate a solution to this puzzle. For example, this board state has an 8-move solution:
     </p>
     <div class="bg-accent shadow-inner p-4 rounded-lg max-w-[70%]">
-        <img alt="The beginning of a round." src={solution1} />
+        <img alt="An 8-move solution." src={solution1} />
     </div>
     <p class="text-xl my-2">
         Once you've found a solution, enter the number of moves your solution takes
@@ -51,7 +54,7 @@
         it will be placed before yours in the queue. And indeed, this board state has a solution with fewer than 8 moves:
     </p>
     <div class="bg-accent shadow-inner p-4 rounded-lg max-w-[70%]">
-        <img alt="The beginning of a round." src={solution2} />
+        <img alt="A 6-move solution involving the blue robot." src={solution2} />
     </div>
     <p class="text-xl my-2">
         As you can see, you may use robots besides the one corresponding to the goal in your solution.
@@ -63,7 +66,7 @@
         When it's your turn to demonstrate, your board's background will change colors:
     </p>
     <div class="bg-accent shadow-inner p-4 rounded-lg max-w-[70%]">
-        <img alt="The beginning of a round." src={demonstration} />
+        <img alt="The demonstration screen." src={demonstration} />
     </div>
     <p class="text-xl my-2">
         Clicking on a robot will reveal a menu allowing you to move it up, down, left, or right.
@@ -75,9 +78,10 @@
         If you succeed, the robots will stay, you will gain a point, and the next round will start:
     </p>
     <div class="bg-accent shadow-inner p-4 rounded-lg max-w-[70%]">
-        <img alt="The beginning of a round." src={next_round} />
+        <img alt="The beginning of a new round." src={next_round} />
     </div>
     <p class="text-xl my-2">
         A new goal will be given (here, the yellow planet), and the process will repeat until the end of the game.
     </p>
+    <h1 class="hover:cursor-pointer hover:underline text-center" on:click={() => { goto('/er'); }} on:keydown={() => { goto('/er'); }}> home</h1>
 </div>

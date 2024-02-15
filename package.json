@@ -1,6 +1,6 @@
 {
-    "name": "sveltekit-example",
-    "version": "0.0.1",
+    "name": "deflecting-drones",
+    "version": "0.2.0",
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
