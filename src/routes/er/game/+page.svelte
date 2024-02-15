@@ -297,7 +297,7 @@
         <!-- goal display -->
         <div class="bg-primary rounded-lg p-6 text-center">
             <p class="text-center pb-2 text-xl">goal</p>
-            <div class="shadow-inner bg-accent rounded min-h-[70%]">
+            <div class="flex items-center shadow-inner bg-accent rounded min-h-[70%]">
                 <img
                     class="mx-auto w-24 h-24"
                     src={`/goals/${currentGoal?.color || 'm'}_${
